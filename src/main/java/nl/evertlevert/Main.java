@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -12,6 +15,16 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
+
+    private static String bearerToken;
+    private static String username;
+    private static String password;
+
+    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException{
+        getSecret();
+        getMeSomeRepos();
+        //testProcess("JYK94/React-Arin-Gallery");
+    }
 
     private static final CsvSchema schemaHeader = CsvSchema.builder().setUseHeader(true)
             .addColumn("language")
@@ -35,8 +48,7 @@ public class Main {
             .addColumn("description")
             .build();
 
-
-    public static void Save(RepoModel repoModel) {
+    private static void Save(RepoModel repoModel) {
         try {
             File csvOutputFile = new File("myObjects.csv");
             CsvSchema csvSchema = schema;
@@ -57,25 +69,32 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
-
-        getSecret();
-        getMeSomeRepos();
-    }
-
-    private static String bearerToken;
-    public static void getSecret(){
+    private static void getSecret() {
         try {
             String path = System.getProperty("user.dir") + "\\git_hub_sampler.properties";
             File myObj = new File(path);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
-                if(data.startsWith("bearer_token")){
+                if (data.startsWith("bearer_token")) {
                     data = data.trim();
-                    int start = "bearer_token=".length();
+                    int start = "bearer_token=" .length();
                     int end = data.length();
-                    bearerToken = data.substring(start,end).trim();
+                    bearerToken = data.substring(start, end).trim();
+                }
+                if (data.startsWith("username")) {
+                    data = data.trim();
+                    int start = "username=" .length();
+                    int end = data.length();
+                    username = data.substring(start, end).trim();
+                }
+
+
+                if (data.startsWith("password")) {
+                    data = data.trim();
+                    int start = "password=" .length();
+                    int end = data.length();
+                    password = data.substring(start, end).trim();
                 }
             }
             myReader.close();
@@ -84,8 +103,6 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-
 
     private static void getMeSomeRepos() throws URISyntaxException, IOException, InterruptedException {
         ApiRequesters apiRequesters = new ApiRequesters(bearerToken);
@@ -100,12 +117,18 @@ public class Main {
                 for (RepoModel r : repoModels) {
                     System.out.println("---");
                     System.out.println(r.getLanguage() + " | " + r.getDescription() + " | " + r.getSize());
-                        Save(r);
-                    }
+                    Save(r);
                 }
             }
-
             TimeUnit.SECONDS.sleep(4);
         }
+    }
+    private static void testProcess(String nameRepo) throws GitAPIException {
+        Git git = Git.cloneRepository()
+                .setURI("https://github.com/" + nameRepo)
+                .setDirectory(new File("/" + nameRepo))
+                .setCredentialsProvider( new UsernamePasswordCredentialsProvider( username, password ) )
+                .call();
+    }
 
 }
