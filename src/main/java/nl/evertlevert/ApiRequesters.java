@@ -24,6 +24,7 @@ public class ApiRequesters {
         this.bearerToken = bearerToken;
     }
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final String bearerToken;
 
@@ -82,8 +83,8 @@ public class ApiRequesters {
             String description = elementJsonObject.get("description").isJsonNull() ? "" : elementJsonObject.get("description").getAsString();
             repoModel.setDescription(description);
 
-            repoModel.setCreated_at(LocalDateTime.parse(elementJsonObject.get("created_at").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
-            repoModel.setUpdated_at(LocalDateTime.parse(elementJsonObject.get("updated_at").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
+            repoModel.setCreated_at_string(LocalDateTime.parse(elementJsonObject.get("created_at").getAsString(), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
+            repoModel.setUpdated_at_string(LocalDateTime.parse(elementJsonObject.get("updated_at").getAsString(), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
 
             repoModel.setIsFork(elementJsonObject.get("fork").getAsBoolean());
             repoModel.setIsPrivate(elementJsonObject.get("private").getAsBoolean());
