@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -59,6 +60,7 @@ public class Main {
 
             CsvMapper mapper = new CsvMapper();
             mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
+            mapper.findAndRegisterModules();
             ObjectWriter writer = mapper.writerFor(RepoModel.class).with(csvSchema);
             OutputStream outputStream = new FileOutputStream(csvOutputFile, true);
             writer.writeValue(outputStream, repoModel);

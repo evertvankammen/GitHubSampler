@@ -17,3 +17,12 @@ Wees er zeker van dat je dit bestand <u><b><i>niet</i></b></u> commit, anders di
 GitHub gegevens aanpassen.
 
 Het gebruik van deze software is geheel voor eigen risico.
+
+Build:
+```
+mvn clean compile assembly:single
+```
+
+Run:
+```
+C:\Java\jdk-11\bin\java.exe -cp target/GitHubSampler-1.0-SNAPSHOT.jar nl.evertlevert.Main
