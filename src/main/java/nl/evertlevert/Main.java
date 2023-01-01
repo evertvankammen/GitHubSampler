@@ -73,7 +73,7 @@ public class Main {
 
     private static void getSecret() {
         try {
-            String path = System.getProperty("user.dir") + "\\git_hub_sampler.properties";
+            String path = "git_hub_sampler.properties";
             File myObj = new File(path);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
